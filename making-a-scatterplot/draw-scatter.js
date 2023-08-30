@@ -6,6 +6,7 @@ async function drawScatter() {
 
   const xAccessor = (d) => d.dewPoint
   const yAccessor = (d) => d.humidity
+  const colorAccessor = (d) => d.cloudCover
 
   const width = d3.min([window.innerWidth * 0.9, window.innerHeight * 0.9])
 
@@ -44,6 +45,11 @@ async function drawScatter() {
     .range([dimensions.boundedHeight, 0])
     .nice()
 
+  const colorScale = d3
+    .scaleLinear()
+    .domain(d3.extent(dataset, colorAccessor))
+    .range(['skyblue', 'darkslategrey'])
+
   // const dots = bounds
   //   .selectAll('circle')
   //   .data(dataset)
@@ -77,13 +83,33 @@ async function drawScatter() {
     .attr('cx', (d) => xScale(xAccessor(d)))
     .attr('cy', (d) => yScale(yAccessor(d)))
     .attr('r', 5)
-    .attr('fill', 'cornflowerblue')
+    .attr('fill', (d) => colorScale(colorAccessor(d)))
 
   const xAxisGenerator = d3.axisBottom().scale(xScale)
   const xAxis = bounds
     .append('g')
     .call(xAxisGenerator)
     .style('transform', `translateY(${dimensions.boundedHeight}px)`)
+
+  const xAxisLabel = xAxis
+    .append('text')
+    .attr('x', dimensions.boundedWidth / 2)
+    .attr('y', dimensions.margin.bottom - 10)
+    .attr('fill', 'black')
+    .style('font-size', '1.4em')
+    .html('Dew point (&deg;F)')
+
+  const yAxisGenerator = d3.axisLeft().scale(yScale).ticks(4)
+  const yAxis = bounds.append('g').call(yAxisGenerator)
+  const yAxisLabel = yAxis
+    .append('text')
+    .attr('x', -dimensions.boundedHeight / 2)
+    .attr('y', -dimensions.margin.left + 10)
+    .attr('fill', 'black')
+    .style('font-size', '1.4em')
+    .text('Relative humidity')
+    .style('transform', 'rotate(-90deg)')
+    .style('text-anchor', 'middle')
 }
 
 drawScatter()
