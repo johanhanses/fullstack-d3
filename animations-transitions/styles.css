@@ -12,3 +12,7 @@
     font-size: 1.4em;
     text-transform: capitalize;
 }
+
+.listening-rect {
+  fill: transparent;
+}

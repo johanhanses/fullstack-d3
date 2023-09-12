@@ -110,8 +110,6 @@ async function drawLineChart() {
       .on('mousemove', onMouseMove)
       .on('mouseleave', onMouseLeave)
 
-    const tooltip = d3.select('#tooltip')
-
     function onMouseMove(e) {
       const mousePosition = d3.pointer(e)
       const hoveredDate = xScale.invert(mousePosition[0])
@@ -136,6 +134,20 @@ async function drawLineChart() {
       )
 
       tooltip.style('opacity', 1)
+
+      const tooltip = d3.select('#tooltip')
+      const tooltipCircle = bounds
+        .append('circle')
+        .attr('r', 4)
+        .attr('stroke', '#af9358')
+        .attr('fill', 'white')
+        .attr('stroke-width', 2)
+        .style('opacity', 0)
+
+      tooltipCircle
+        .attr('cx', xScale(closestXValue))
+        .attr('cy', yScale(closestYValue))
+        .style('opacity', 1)
     }
 
     function onMouseLeave() {
